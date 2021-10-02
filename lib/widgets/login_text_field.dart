@@ -39,11 +39,12 @@ class _LoginTextFieldState extends State<LoginTextField> {
                     setState(() => widget.obsecure = !widget.obsecure);
                   })
               : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(25)),
-            borderSide:
-                BorderSide(color: Theme.of(context).cardColor.withOpacity(0.4)),
-          ),
+          enabledBorder:
+              textFieldBorder(Theme.of(context).cardColor.withOpacity(0.4)),
+          focusedBorder:
+              textFieldBorder(Theme.of(context).cardColor.withOpacity(0.4)),
+          errorBorder: textFieldBorder(Colors.red.withOpacity(0.4)),
+          focusedErrorBorder: textFieldBorder(Colors.red.withOpacity(0.4)),
           fillColor: Theme.of(context).cardColor.withOpacity(0.4),
           filled: true,
           hintText: widget.hint,
@@ -53,6 +54,13 @@ class _LoginTextFieldState extends State<LoginTextField> {
         validator: widget.validator,
         onSaved: widget.save,
       ),
+    );
+  }
+
+  OutlineInputBorder textFieldBorder(Color color) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(25)),
+      borderSide: BorderSide(color: color),
     );
   }
 }

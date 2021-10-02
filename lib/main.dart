@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:t_library_dashboard/screens/login_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import './screens/login_screen.dart';
 import './screens/welcome_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
           textTheme: TextTheme(
             headline6: TextStyle(color: Colors.white, fontFamily: 'Sego'),
           )),
-      home: LoginScreen(),
+      home: WelcomeScreen(),
     );
   }
 }

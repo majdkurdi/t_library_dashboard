@@ -1,14 +1,13 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/user.dart';
+import '../models/auth_response.dart';
 
-const String url = 'ldhjdb';
+const String baseUrl = 'http://127.0.0.1:8000/api';
 
 class Auth {
-  late final Auth auth;
-
   Auth._privateConstructor();
 
-  static late final Auth? _instance;
+  static Auth? _instance;
 
   factory Auth() {
     if (_instance == null) {
@@ -17,7 +16,13 @@ class Auth {
     return _instance!;
   }
 
-  Future<User> signIn(String email, String password) async {
-    final response = await http.post(Uri.parse(url));
+  Future<AuthResponse> signIn(String email, String password) async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/loginAdmin'),
+          body: {'email': email, 'password': password});
+      return AuthResponse.fromJson(jsonDecode(response.body));
+    } on Exception catch (e) {
+      throw e;
+    }
   }
 }

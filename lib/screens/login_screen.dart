@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../notifiers/auth_notifier.dart';
 import '../widgets/login_text_field.dart';
 import '../widgets/login_button.dart';
+
+final authProvider = StateProvider<AuthNotifier>((ref) => AuthNotifier());
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -9,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
+  bool loading = false;
   String? email;
   String? password;
 
@@ -35,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(
-                          height: 20,
+                          height: 30,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -58,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     val.contains('.')) {
                                   return null;
                                 } else {
-                                  return 'please provide a valid email!';
+                                  return 'Please provide a valid email!';
                                 }
                               },
                               save: (val) {
@@ -70,10 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               password: true,
                               obsecure: true,
                               validator: (val) {
-                                if (val != null && val.length >= 8) {
+                                if (val != null && val.length >= 6) {
                                   return null;
                                 } else {
-                                  return 'Weak Password!';
+                                  return 'Short Password!';
                                 }
                               },
                               save: (val) {
@@ -82,24 +87,30 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        LoginButton(
-                          onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                            }
-                          },
-                        ),
+                        Consumer(builder: (context, watch, child) {
+                          final auth = watch(authProvider);
+                          return LoginButton(
+                            loading: loading,
+                            onTap: () async {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                setState(() => loading = true);
+                                final loggedIn =
+                                    await auth.state.signIn(email!, password!);
+                                setState(() => loading = false);
+                                if (loggedIn) {
+                                  //navigation
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Error!, check your connection and try again.')));
+                                }
+                              }
+                            },
+                          );
+                        }),
                         SizedBox(height: 20),
-                        // TextButton(
-                        //   child: Text(
-                        //     'Sign Up',
-                        //     style: Theme.of(context)
-                        //         .textTheme
-                        //         .headline6!
-                        //         .copyWith(fontSize: 15),
-                        //   ),
-                        //   onPressed: () {},
-                        // )
                       ],
                     ),
                   ),

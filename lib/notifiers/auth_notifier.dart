@@ -1,12 +1,29 @@
 import 'package:flutter/cupertino.dart';
-import '../models/user.dart';
+import 'package:t_library_dashboard/models/auth_response.dart';
 import '../services/authentication.dart';
 
 class AuthNotifier with ChangeNotifier {
-  late User currentUser;
-  final auth = Auth();
+  AuthResponse? _authResponse;
+  final _auth = Auth();
 
-  Future<void> signIn(String email, String password) async {
-    currentUser = await auth.signIn(email, password);
+  Future<bool> signIn(String email, String password) async {
+    try {
+      _authResponse = await _auth.signIn(email, password);
+      print('loggedIn');
+      notifyListeners();
+      return true;
+    } on Exception catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  void signOut() {
+    _authResponse = null;
+    notifyListeners();
+  }
+
+  String? get token {
+    return _authResponse?.token;
   }
 }
