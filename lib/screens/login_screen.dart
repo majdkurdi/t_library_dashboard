@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:t_library_dashboard/screens/main_screen.dart';
 import '../notifiers/auth_notifier.dart';
 import '../widgets/login_text_field.dart';
 import '../widgets/login_button.dart';
@@ -99,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     await auth.state.signIn(email!, password!);
                                 setState(() => loading = false);
                                 if (loggedIn) {
-                                  //navigation
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (ctx) => MainScreen()));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
